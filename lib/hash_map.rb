@@ -5,7 +5,7 @@ require_relative 'linked_lists'
 # This houses the methods of a hash map
 class HashMap
   def initialize
-    @data = Array.new(16)
+    @buckets = Array.new(16)
   end
 
   def hash(key)
@@ -14,23 +14,29 @@ class HashMap
 
     key.each_char { |char| hash_code = prime_number * hash_code + char.ord }
 
-    hash_code % @data.size
+    hash_code % @buckets.size
   end
 
   def set(key, value)
-    if @data[hash(key)] == nil
+    index = hash(key)
+    raise IndexError if index.negative? || index >= @buckets.length
+
+    if @buckets[index] == nil
       linked_list = LinkedList.new 
       linked_list.append({"#{key}": value})
-      @data[hash(key)] = linked_list
+      @buckets[index] = linked_list
     else
-      @data[hash(key)].append({"#{key}": value})
+      @buckets[index].append({"#{key}": value})
     end
   end
 
   def get(key)
-    return nil if @data[hash(key)] == nil
+    index = hash(key)
+    raise IndexError if index.negative? || index >= @buckets.length
+
+    return nil if @buckets[index] == nil
     
-    current_node = @data[hash(key)].head
+    current_node = @buckets[index].head
     
     until current_node.value.key?(key.to_sym)
       current_node = current_node.next_node
