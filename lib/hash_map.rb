@@ -42,6 +42,7 @@ class HashMap
     
     until current_node.next_node.nil?
       break if current_node.value.key?(key.to_sym)
+
       current_node = current_node.next_node
     end
 
@@ -56,11 +57,12 @@ class HashMap
     
     current_node = @buckets[index].head
     
-    until current_node.value.key?(key.to_sym)
+    until current_node.next_node.nil?
+      return current_node.value.key?(key.to_sym) if current_node.value.key?(key.to_sym)
+
       current_node = current_node.next_node
     end
-
-    return current_node.value.key?(key.to_sym)
+    false
   end
 
   def remove(key)
@@ -91,4 +93,4 @@ hash_map.set('Albert', 'Pujols')
 
 p hash_map
 p hash_map.remove('Carlos')
-p hash_map.get('Carlos')
+p hash_map.has('Carlos')
