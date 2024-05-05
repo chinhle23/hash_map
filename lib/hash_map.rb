@@ -81,8 +81,16 @@ class HashMap
         current_node = current_node.next_node
       end
     end
+  end
 
-    nil
+  def length
+    count = 0
+
+    @buckets.each do |item|
+      count += item.size unless item.nil?
+    end
+   
+    count
   end
 end
 
@@ -94,7 +102,8 @@ hash_map.set('Chinh', 'Le')
 hash_map.set('Juan', 'Soto')
 hash_map.set('Pedro', 'Martinez')
 hash_map.set('Albert', 'Pujols')
+hash_map.set('Hideki', 'Matsui')
+hash_map.set('Rickey', 'Henderson')
 
 p hash_map
-p hash_map.remove('Carlos')
-p hash_map.has('Carlos')
+p hash_map.length
