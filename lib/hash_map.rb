@@ -22,11 +22,19 @@ class HashMap
   def set(key, value)
     index = hash(key)
     raise IndexError if index.negative? || index >= @buckets.length
-
     if @buckets[index] == nil
       linked_list = LinkedList.new 
       linked_list.append({"#{key}": value})
       @buckets[index] = linked_list
+    elsif has(key)
+      current_node = @buckets[index].head
+    
+      until current_node.next_node.nil?
+        break if current_node.value.key?(key.to_sym)
+        current_node = current_node.next_node
+      end
+
+      current_node.value[key.to_sym] = value
     else
       @buckets[index].append({"#{key}": value})
     end
@@ -62,7 +70,7 @@ class HashMap
 
       current_node = current_node.next_node
     end
-    false
+    current_node.value.key?(key.to_sym)
   end
 
   def remove(key)
@@ -132,4 +140,5 @@ hash_map.set('Rickey', 'Henderson')
 hash_map.set('Rickey', 'Martin')
 
 p hash_map
+p hash_map.has('Rickey')
 p hash_map.keys
