@@ -66,10 +66,11 @@ class HashMap
     current_node = @buckets[index].head
     
     until current_node.next_node.nil?
-      return current_node.value.key?(key.to_sym) if current_node.value.key?(key.to_sym)
+      break if current_node.value.key?(key.to_sym)
 
       current_node = current_node.next_node
     end
+    
     current_node.value.key?(key.to_sym)
   end
 
