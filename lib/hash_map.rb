@@ -145,6 +145,25 @@ class HashMap
    
     values.flatten
   end
+
+  def entries
+    entries = []
+
+    @buckets.each do |item|
+      next if item.nil?
+
+      current_node = item.head
+    
+      until current_node.next_node.nil?
+        entries.push([current_node.value.keys, current_node.value.values].flatten)
+        current_node = current_node.next_node
+      end
+
+      entries.push([current_node.value.keys, current_node.value.values].flatten)
+    end
+   
+    entries
+  end
 end
 
 hash_map = HashMap.new
@@ -160,5 +179,5 @@ hash_map.set('Rickey', 'Henderson')
 hash_map.set('Rickey', 'Martin')
 
 p hash_map
-p hash_map.values
 p hash_map.keys
+p hash_map.entries
