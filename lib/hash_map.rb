@@ -44,6 +44,21 @@ class HashMap
 
     current_node.value[key.to_sym]
   end
+
+  def has(key)
+    index = hash(key)
+    raise IndexError if index.negative? || index >= @buckets.length
+
+    return false if @buckets[index] == nil
+    
+    current_node = @buckets[index].head
+    
+    until current_node.value.key?(key.to_sym)
+      current_node = current_node.next_node
+    end
+
+    return current_node.value.key?(key.to_sym)
+  end
 end
 
 hash_map = HashMap.new
@@ -52,4 +67,4 @@ hash_map.set('Carlos', 'Alvarez')
 hash_map.set('Carla', 'Gomez')
 
 p hash_map
-p hash_map.get('Carla')
+p hash_map.has('Carlos')
