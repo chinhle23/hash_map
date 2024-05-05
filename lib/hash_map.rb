@@ -98,6 +98,25 @@ class HashMap
     @capacity = 4
     @buckets = Array.new(@capacity)
   end
+
+  def keys
+    keys = []
+
+    @buckets.each do |item|
+      next if item.nil?
+
+      current_node = item.head
+    
+      until current_node.next_node.nil?
+        keys.push(current_node.value.keys)
+        current_node = current_node.next_node
+      end
+
+      keys.push(current_node.value.keys)
+    end
+   
+    keys.flatten
+  end
 end
 
 hash_map = HashMap.new
@@ -110,7 +129,7 @@ hash_map.set('Pedro', 'Martinez')
 hash_map.set('Albert', 'Pujols')
 hash_map.set('Hideki', 'Matsui')
 hash_map.set('Rickey', 'Henderson')
+hash_map.set('Rickey', 'Martin')
 
 p hash_map
-p hash_map.clear
-p hash_map
+p hash_map.keys
