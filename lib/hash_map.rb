@@ -92,6 +92,12 @@ class HashMap
    
     count
   end
+
+  def clear
+    @buckets.clear
+    @capacity = 4
+    @buckets = Array.new(@capacity)
+  end
 end
 
 hash_map = HashMap.new
@@ -106,4 +112,5 @@ hash_map.set('Hideki', 'Matsui')
 hash_map.set('Rickey', 'Henderson')
 
 p hash_map
-p hash_map.length
+p hash_map.clear
+p hash_map
