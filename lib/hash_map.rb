@@ -5,7 +5,9 @@ require_relative 'linked_lists'
 # This houses the methods of a hash map
 class HashMap
   def initialize
-    @buckets = Array.new(16)
+    @capacity = 4
+    @load_factor = 0.75
+    @buckets = Array.new(@capacity)
   end
 
   def hash(key)
@@ -38,7 +40,8 @@ class HashMap
     
     current_node = @buckets[index].head
     
-    until current_node.value.key?(key.to_sym)
+    until current_node.next_node.nil?
+      break if current_node.value.key?(key.to_sym)
       current_node = current_node.next_node
     end
 
@@ -59,12 +62,33 @@ class HashMap
 
     return current_node.value.key?(key.to_sym)
   end
+
+  def remove(key)
+    index = hash(key)
+    raise IndexError if index.negative? || index >= @buckets.length
+
+    return nil if @buckets[index] == nil
+    
+    current_node = @buckets[index].head
+    
+    until current_node.value.key?(key.to_sym)
+      current_node = current_node.next_node
+    end
+
+    @buckets[index].remove_at(@buckets[index].find(current_node.value))
+    return current_node
+  end
 end
 
 hash_map = HashMap.new
 
 hash_map.set('Carlos', 'Alvarez')
 hash_map.set('Carla', 'Gomez')
+hash_map.set('Chinh', 'Le')
+hash_map.set('Juan', 'Soto')
+hash_map.set('Pedro', 'Martinez')
+hash_map.set('Albert', 'Pujols')
 
 p hash_map
-p hash_map.has('Carlos')
+p hash_map.remove('Carlos')
+p hash_map.get('Carlos')
