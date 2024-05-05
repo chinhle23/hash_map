@@ -73,12 +73,16 @@ class HashMap
     
     current_node = @buckets[index].head
     
-    until current_node.value.key?(key.to_sym)
-      current_node = current_node.next_node
+    until current_node.next_node.nil?
+      if current_node.value.key?(key.to_sym)
+        @buckets[index].remove_at(@buckets[index].find(current_node.value))
+        return current_node
+      else  
+        current_node = current_node.next_node
+      end
     end
 
-    @buckets[index].remove_at(@buckets[index].find(current_node.value))
-    return current_node
+    nil
   end
 end
 
