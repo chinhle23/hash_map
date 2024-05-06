@@ -25,7 +25,7 @@ class HashMap
       @capacity += 4
       @buckets = Array.new(@capacity)
       current_entries.each do |entry|
-        add_to_bucket(entry[0].to_s, entry[1])
+        add_to_bucket(entry[0], entry[1])
       end
     end
       
@@ -41,12 +41,12 @@ class HashMap
     current_node = @buckets[index].head
     
     until current_node.next_node.nil?
-      break if current_node.value.key?(key.to_sym)
+      break if current_node.value[0] == key
 
       current_node = current_node.next_node
     end
 
-    current_node.value[key.to_sym]
+    current_node.value[1]
   end
 
   def has(key)
@@ -58,12 +58,12 @@ class HashMap
     current_node = @buckets[index].head
     
     until current_node.next_node.nil?
-      break if current_node.value.key?(key.to_sym)
+      break if current_node.value[0] == key
 
       current_node = current_node.next_node
     end
     
-    current_node.value.key?(key.to_sym)
+    current_node.value[0] == key
   end
 
   def remove(key)
@@ -75,13 +75,13 @@ class HashMap
     current_node = @buckets[index].head
     
     until current_node.next_node.nil?
-      if current_node.value.key?(key.to_sym)
-        @buckets[index].remove_at(@buckets[index].find(current_node.value))
-        return current_node
-      else  
-        current_node = current_node.next_node
-      end
+      break if current_node.value[0] == key
+
+      current_node = current_node.next_node
     end
+
+    @buckets[index].remove_at(@buckets[index].find(current_node.value))
+    return current_node
   end
 
   def length
@@ -104,54 +104,54 @@ class HashMap
     keys = []
 
     @buckets.each do |item|
-      next if item.nil?
+      next if item.nil? || item.head.nil?
 
       current_node = item.head
-    
+
       until current_node.next_node.nil?
-        keys.push(current_node.value.keys)
+        keys.push(current_node.value[0])
         current_node = current_node.next_node
       end
 
-      keys.push(current_node.value.keys)
+      keys.push(current_node.value[0])
     end
    
-    keys.flatten
+    keys
   end
 
   def values
     values = []
 
     @buckets.each do |item|
-      next if item.nil?
+      next if item.nil? || item.head.nil?
 
       current_node = item.head
     
       until current_node.next_node.nil?
-        values.push(current_node.value.values)
+        values.push(current_node.value[1])
         current_node = current_node.next_node
       end
 
-      values.push(current_node.value.values)
+      values.push(current_node.value[1])
     end
    
-    values.flatten
+    values
   end
 
   def entries
     entries = []
 
     @buckets.each do |item|
-      next if item.nil?
+      next if item.nil? || item.head.nil?
 
       current_node = item.head
     
       until current_node.next_node.nil?
-        entries.push([current_node.value.keys, current_node.value.values].flatten)
+        entries.push(current_node.value)
         current_node = current_node.next_node
       end
 
-      entries.push([current_node.value.keys, current_node.value.values].flatten)
+      entries.push(current_node.value)
     end
    
     entries
@@ -165,19 +165,19 @@ class HashMap
 
     if @buckets[index] == nil
       linked_list = LinkedList.new 
-      linked_list.append({"#{key}": value})
+      linked_list.append([key, value])
       @buckets[index] = linked_list
     elsif has(key)
       current_node = @buckets[index].head
     
       until current_node.next_node.nil?
-        break if current_node.value.key?(key.to_sym)
+        break if current_node.value[0] == key
         current_node = current_node.next_node
       end
 
-      current_node.value[key.to_sym] = value
+      current_node.value[1] = value
     else
-      @buckets[index].append({"#{key}": value})
+      @buckets[index].append([key, value])
     end
   end
 
@@ -203,5 +203,7 @@ hash_map.set('Rickey', 'Martin')
 
 p hash_map
 p hash_map.length
-p hash_map.keys
+p hash_map.values
 p hash_map.entries
+p hash_map.clear
+p hash_map
