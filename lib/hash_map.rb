@@ -20,24 +20,16 @@ class HashMap
   end
 
   def set(key, value)
-    index = hash(key)
-    raise IndexError if index.negative? || index >= @buckets.length
-    if @buckets[index] == nil
-      linked_list = LinkedList.new 
-      linked_list.append({"#{key}": value})
-      @buckets[index] = linked_list
-    elsif has(key)
-      current_node = @buckets[index].head
-    
-      until current_node.next_node.nil?
-        break if current_node.value.key?(key.to_sym)
-        current_node = current_node.next_node
+    if buckets_length(@buckets) >= @capacity * @load_factor
+      current_entries = entries
+      @capacity += 4
+      @buckets = Array.new(@capacity)
+      current_entries.each do |entry|
+        add_to_bucket(entry[0].to_s, entry[1])
       end
-
-      current_node.value[key.to_sym] = value
-    else
-      @buckets[index].append({"#{key}": value})
     end
+      
+    add_to_bucket(key, value)
   end
 
   def get(key)
@@ -164,6 +156,36 @@ class HashMap
    
     entries
   end
+
+  private
+
+  def add_to_bucket(key, value)
+    index = hash(key)
+    raise IndexError if index.negative? || index >= @buckets.length
+
+    if @buckets[index] == nil
+      linked_list = LinkedList.new 
+      linked_list.append({"#{key}": value})
+      @buckets[index] = linked_list
+    elsif has(key)
+      current_node = @buckets[index].head
+    
+      until current_node.next_node.nil?
+        break if current_node.value.key?(key.to_sym)
+        current_node = current_node.next_node
+      end
+
+      current_node.value[key.to_sym] = value
+    else
+      @buckets[index].append({"#{key}": value})
+    end
+  end
+
+  def buckets_length(buckets)
+    length = buckets.length
+    buckets.each { |item| length -= 1 if item.nil? }
+    length
+  end
 end
 
 hash_map = HashMap.new
@@ -175,9 +197,11 @@ hash_map.set('Juan', 'Soto')
 hash_map.set('Pedro', 'Martinez')
 hash_map.set('Albert', 'Pujols')
 hash_map.set('Hideki', 'Matsui')
+hash_map.set('Hideo', 'Nomo')
 hash_map.set('Rickey', 'Henderson')
 hash_map.set('Rickey', 'Martin')
 
 p hash_map
+p hash_map.length
 p hash_map.keys
 p hash_map.entries
