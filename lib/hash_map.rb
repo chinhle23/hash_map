@@ -28,7 +28,7 @@ class HashMap
         add_to_bucket(entry[0], entry[1])
       end
     end
-      
+
     add_to_bucket(key, value)
   end
 
@@ -36,8 +36,8 @@ class HashMap
     index = hash(key)
     raise IndexError if index.negative? || index >= @buckets.length
 
-    return nil if @buckets[index] == nil || !has(key)
-    
+    return nil if @buckets[index].nil? || !has(key)
+
     current_node = find_node(key, @buckets[index])
     current_node.value[1]
   end
@@ -46,8 +46,8 @@ class HashMap
     index = hash(key)
     raise IndexError if index.negative? || index >= @buckets.length
 
-    return false if @buckets[index] == nil
-    
+    return false if @buckets[index].nil?
+
     current_node = find_node(key, @buckets[index])
     current_node.value[0] == key
   end
@@ -56,11 +56,11 @@ class HashMap
     index = hash(key)
     raise IndexError if index.negative? || index >= @buckets.length
 
-    return nil if @buckets[index] == nil || !has(key)
-    
+    return nil if @buckets[index].nil? || !has(key)
+
     current_node = find_node(key, @buckets[index])
     @buckets[index].remove_at(@buckets[index].find(current_node.value)) if has(key)
-    return current_node
+    current_node
   end
 
   def length
@@ -69,7 +69,7 @@ class HashMap
     @buckets.each do |item|
       count += item.size unless item.nil?
     end
-   
+
     count
   end
 
@@ -97,8 +97,8 @@ class HashMap
     index = hash(key)
     raise IndexError if index.negative? || index >= @buckets.length
 
-    if @buckets[index] == nil
-      linked_list = LinkedList.new 
+    if @buckets[index].nil?
+      linked_list = LinkedList.new
       linked_list.append([key, value])
       @buckets[index] = linked_list
     elsif has(key)
@@ -117,18 +117,19 @@ class HashMap
 
   def find_node(key, linked_list)
     current_node = linked_list.head
-    
+
     until current_node.next_node.nil?
       break if current_node.value[0] == key
+
       current_node = current_node.next_node
     end
-    
+
     current_node
-  end 
+  end
 
   def hash_elements(element_type)
-    index = 0 if element_type == "keys"
-    index = 1 if element_type == "values"
+    index = 0 if element_type == 'keys'
+    index = 1 if element_type == 'values'
     elements = []
 
     @buckets.each do |item|
@@ -137,15 +138,15 @@ class HashMap
       current_node = item.head
 
       until current_node.next_node.nil?
-        value = element_type == "entries" ? current_node.value : current_node.value[index]
+        value = element_type == 'entries' ? current_node.value : current_node.value[index]
         elements.push(value)
         current_node = current_node.next_node
       end
 
-      value = element_type == "entries" ? current_node.value : current_node.value[index]
+      value = element_type == 'entries' ? current_node.value : current_node.value[index]
       elements.push(value)
     end
-   
+
     elements
   end
 end
