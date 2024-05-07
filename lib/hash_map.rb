@@ -36,16 +36,9 @@ class HashMap
     index = hash(key)
     raise IndexError if index.negative? || index >= @buckets.length
 
-    return nil if @buckets[index] == nil
+    return nil if @buckets[index] == nil || !has(key)
     
-    current_node = @buckets[index].head
-    
-    until current_node.next_node.nil?
-      break if current_node.value[0] == key
-
-      current_node = current_node.next_node
-    end
-
+    current_node = find_node(key, @buckets[index])
     current_node.value[1]
   end
 
@@ -55,14 +48,7 @@ class HashMap
 
     return false if @buckets[index] == nil
     
-    current_node = @buckets[index].head
-    
-    until current_node.next_node.nil?
-      break if current_node.value[0] == key
-
-      current_node = current_node.next_node
-    end
-    
+    current_node = find_node(key, @buckets[index])
     current_node.value[0] == key
   end
 
@@ -70,17 +56,10 @@ class HashMap
     index = hash(key)
     raise IndexError if index.negative? || index >= @buckets.length
 
-    return nil if @buckets[index] == nil
+    return nil if @buckets[index] == nil || !has(key)
     
-    current_node = @buckets[index].head
-    
-    until current_node.next_node.nil?
-      break if current_node.value[0] == key
-
-      current_node = current_node.next_node
-    end
-
-    @buckets[index].remove_at(@buckets[index].find(current_node.value))
+    current_node = find_node(key, @buckets[index])
+    @buckets[index].remove_at(@buckets[index].find(current_node.value)) if has(key)
     return current_node
   end
 
@@ -168,13 +147,7 @@ class HashMap
       linked_list.append([key, value])
       @buckets[index] = linked_list
     elsif has(key)
-      current_node = @buckets[index].head
-    
-      until current_node.next_node.nil?
-        break if current_node.value[0] == key
-        current_node = current_node.next_node
-      end
-
+      current_node = find_node(key, @buckets[index])
       current_node.value[1] = value
     else
       @buckets[index].append([key, value])
@@ -186,6 +159,17 @@ class HashMap
     buckets.each { |item| length -= 1 if item.nil? }
     length
   end
+
+  def find_node(key, linked_list)
+    current_node = linked_list.head
+    
+    until current_node.next_node.nil?
+      break if current_node.value[0] == key
+      current_node = current_node.next_node
+    end
+    
+    current_node
+  end 
 end
 
 hash_map = HashMap.new
@@ -200,6 +184,8 @@ hash_map.set('Hideki', 'Matsui')
 hash_map.set('Hideo', 'Nomo')
 hash_map.set('Rickey', 'Henderson')
 hash_map.set('Rickey', 'Martin')
+
+p hash_map.remove('Carla')
 
 p hash_map
 p hash_map.length
