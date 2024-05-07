@@ -80,60 +80,15 @@ class HashMap
   end
 
   def keys
-    keys = []
-
-    @buckets.each do |item|
-      next if item.nil? || item.head.nil?
-
-      current_node = item.head
-
-      until current_node.next_node.nil?
-        keys.push(current_node.value[0])
-        current_node = current_node.next_node
-      end
-
-      keys.push(current_node.value[0])
-    end
-   
-    keys
+    hash_elements('keys')
   end
 
   def values
-    values = []
-
-    @buckets.each do |item|
-      next if item.nil? || item.head.nil?
-
-      current_node = item.head
-    
-      until current_node.next_node.nil?
-        values.push(current_node.value[1])
-        current_node = current_node.next_node
-      end
-
-      values.push(current_node.value[1])
-    end
-   
-    values
+    hash_elements('values')
   end
 
   def entries
-    entries = []
-
-    @buckets.each do |item|
-      next if item.nil? || item.head.nil?
-
-      current_node = item.head
-    
-      until current_node.next_node.nil?
-        entries.push(current_node.value)
-        current_node = current_node.next_node
-      end
-
-      entries.push(current_node.value)
-    end
-   
-    entries
+    hash_elements('entries')
   end
 
   private
@@ -170,6 +125,29 @@ class HashMap
     
     current_node
   end 
+
+  def hash_elements(element_type)
+    index = 0 if element_type == "keys"
+    index = 1 if element_type == "values"
+    elements = []
+
+    @buckets.each do |item|
+      next if item.nil? || item.head.nil?
+
+      current_node = item.head
+
+      until current_node.next_node.nil?
+        value = element_type == "entries" ? current_node.value : current_node.value[index]
+        elements.push(value)
+        current_node = current_node.next_node
+      end
+
+      value = element_type == "entries" ? current_node.value : current_node.value[index]
+      elements.push(value)
+    end
+   
+    elements
+  end
 end
 
 hash_map = HashMap.new
@@ -189,7 +167,7 @@ p hash_map.remove('Carla')
 
 p hash_map
 p hash_map.length
-p hash_map.values
+p hash_map.keys
 p hash_map.entries
 p hash_map.clear
 p hash_map
